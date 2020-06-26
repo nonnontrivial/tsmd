@@ -14,7 +14,7 @@ use tokio::prelude::*;
 
 #[derive(StructOpt, Debug)]
 #[structopt(
-    name = "tmg",
+    name = "tsmd",
     version = env!("CARGO_PKG_VERSION"),
     about = "
         generate markdown tables from type script interfaces
