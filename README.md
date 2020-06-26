@@ -22,3 +22,37 @@ Running the following command will create `./input.md` and fill it with [markdow
 cargo r -- -s ./input.ts
 
 ```
+
+When `./input.ts` looks like this,
+
+```typescript
+export interface Output<A extends LowLevelAsset<unknown>> {
+  id: string;
+  timestamp: string;
+  data: Omit<A, "">;
+}
+
+export interface LowLevelAsset<D> {
+  filename?: string;
+  filenames?: string[];
+  data: D;
+}
+
+```
+
+`./input.md` will look like the following.
+
+## Output
+
+| Field | Type |
+| --- | --- |
+| timestamp | `string` |
+| id | `string` |
+| data | `Omit<A, "">` |
+## LowLevelAsset
+
+| Field | Type |
+| --- | --- |
+| filenames? | `string[]` |
+| filename? | `string` |
+| data | `D` |
