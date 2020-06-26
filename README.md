@@ -1,5 +1,7 @@
 # tsmd
 
+![Rust](https://github.com/nonnontrivial/tsmd/workflows/Rust/badge.svg)
+
 > generate markdown tables from TypeScript interfaces
 
 ## Status
