@@ -121,4 +121,10 @@ mod tests {
         let md_content = transform_interfaces_to_md_content(interfaces).unwrap();
         assert_eq!(md_content, "");
     }
+
+    #[test]
+    fn interface_collection() {
+        let interfaces = collect_interfaces(String::from("")).unwrap();
+        assert_eq!(interfaces, HashMap::new());
+    }
 }
