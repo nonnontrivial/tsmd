@@ -2,6 +2,10 @@
 
 //! generate markdown tables from type script interfaces
 //!
+//! ## example
+//! ```shell
+//! cargo r -- -s ./input.ts -i "#"
+//! ```
 
 use anyhow::*;
 use std::collections::HashMap;
@@ -10,7 +14,6 @@ use std::path::PathBuf;
 use std::process;
 use structopt::StructOpt;
 use tokio::fs;
-use tokio::prelude::*;
 
 #[derive(StructOpt, Debug)]
 #[structopt(
@@ -24,6 +27,9 @@ struct Opt {
     /// source_filepath to .ts source.
     #[structopt(parse(from_os_str), short, long, required = true)]
     source_filepath: PathBuf,
+    /// Characters that should should prefix interface names in markdown
+    #[structopt(short, long, default_value = "##")]
+    interface_prefix: String,
 }
 
 const INTERFACE: &'static str = "interface";
@@ -67,10 +73,11 @@ fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String
 /// Unpacks hashmap describing interfaces to actual table contents.
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
+    interface_prefix: &str,
 ) -> Result<String> {
     let mut output = String::new();
     for (interface, contents) in interfaces {
-        output.push_str(&format!("## {}\n\n", interface));
+        output.push_str(&format!("{} {}\n\n", interface_prefix, interface));
         output.push_str(
             &contents.iter().fold(
                 String::from("| Field | Type |\n| --- | --- |\n"),
@@ -91,13 +98,13 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
     let contents = fs::read_to_string(&opt.source_filepath).await?;
-    let str = String::from(contents);
-    let interfaces = collect_interfaces(str)?;
-    let md_content = transform_interfaces_to_md_content(interfaces)?;
+    let interfaces = collect_interfaces(contents)?;
 
+    let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
-    let mut file = fs::File::create(md_filepath).await?;
-    file.write_all(md_content.as_bytes()).await?;
+
+    if let Err(_) = fs::remove_file(&md_filepath).await {}
+    fs::write(&md_filepath, md_content.as_bytes()).await?;
     Ok(())
 }
 
@@ -118,7 +125,7 @@ mod tests {
     #[test]
     fn md_content_transformation() {
         let interfaces = HashMap::new();
-        let md_content = transform_interfaces_to_md_content(interfaces).unwrap();
+        let md_content = transform_interfaces_to_md_content(interfaces, "##").unwrap();
         assert_eq!(md_content, "");
     }
 
@@ -127,4 +134,12 @@ mod tests {
         let interfaces = collect_interfaces(String::from("")).unwrap();
         assert_eq!(interfaces, HashMap::new());
     }
+
+    // #[test]
+    // fn interface_prefix_option() {
+    //     let mut interfaces = HashMap::new();
+    //     let contents: HashMap<String, String> = HashMap::new();
+    //     interfaces.insert("".to_string(), contents);
+    //     let md_content = transform_interfaces_to_md_content(interfaces, "#");
+    // }
 }
