@@ -6,6 +6,7 @@
 //! ```shell
 //! cargo r -- -s ./input.ts -i "#"
 //! ```
+//!
 
 use anyhow::*;
 use std::collections::HashMap;
@@ -38,6 +39,7 @@ const INTERFACE: &'static str = "interface";
 fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String, String>>> {
     let mut interfaces = HashMap::new();
     let mut line_index = 0;
+
     for line in contents.lines() {
         match line.find(INTERFACE) {
             Some(index) => {
@@ -46,6 +48,7 @@ fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String
                     .skip(index + INTERFACE.len())
                     .take_while(|c| c != &'<' && c != &'{')
                     .collect(); // let content_map: HashMap<String, String> = HashMap::new();
+
                 interfaces.insert(
                     interface_name.trim().to_string(),
                     contents
@@ -76,6 +79,7 @@ fn transform_interfaces_to_md_content(
     interface_prefix: &str,
 ) -> Result<String> {
     let mut output = String::new();
+
     for (interface, contents) in interfaces {
         output.push_str(&format!("{} {}\n\n", interface_prefix, interface));
         output.push_str(
