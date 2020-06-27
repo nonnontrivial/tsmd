@@ -28,9 +28,7 @@ struct Opt {
 
 const INTERFACE: &'static str = "interface";
 
-/// Collects parsed contents of all interfaces in the source file.
-///
-/// Returns HashMap which associates interfaceName -> HashMap<keyInInterface, valueInInterface>
+/// Collects parsed contents of all interfaces in the source file in a hash map.
 fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String, String>>> {
     let mut interfaces = HashMap::new();
     let mut line_index = 0;
@@ -115,14 +113,12 @@ async fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
-    #[test]
-    fn interface_collection() {
-        unimplemented!();
-    }
+    use super::*;
 
     #[test]
     fn md_content_transformation() {
-        unimplemented!();
+        let interfaces = HashMap::new();
+        let md_content = transform_interfaces_to_md_content(interfaces).unwrap();
+        assert_eq!(md_content, "");
     }
 }
