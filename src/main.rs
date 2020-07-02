@@ -25,7 +25,7 @@ use tokio::fs;
     "
 )]
 struct Opt {
-    /// source_filepath to .ts source.
+    /// Filepath to .ts source.
     #[structopt(parse(from_os_str), short, long, required = true)]
     source_filepath: PathBuf,
     /// Characters that should should prefix interface names in markdown
@@ -141,9 +141,6 @@ mod tests {
 
     // #[test]
     // fn interface_prefix_option() {
-    //     let mut interfaces = HashMap::new();
-    //     let contents: HashMap<String, String> = HashMap::new();
-    //     interfaces.insert("".to_string(), contents);
-    //     let md_content = transform_interfaces_to_md_content(interfaces, "#");
+    //     todo!();
     // }
 }
