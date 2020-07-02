@@ -31,6 +31,9 @@ struct Opt {
     /// Characters that should should prefix interface names in markdown
     #[structopt(short, long, default_value = "##")]
     interface_prefix: String,
+    /// Whether only exported interfaces should be parsed
+    #[structopt(short, long)]
+    exported_only: bool,
 }
 
 const INTERFACE: &'static str = "interface";
@@ -98,9 +101,13 @@ fn transform_interfaces_to_md_content(
 
 /// Reads .ts input and writes .md output.
 async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
+    if opt.exported_only {
+        todo!()
+    }
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
+
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let interfaces = collect_interfaces(contents)?;
 
@@ -127,20 +134,19 @@ mod tests {
     use super::*;
 
     #[test]
+    fn interface_collection() {
+        let mut file_contents = String::from("");
+        file_contents.push_str("export interface {");
+        file_contents.push_str("\tthing: 42");
+        file_contents.push_str("}");
+        let interfaces = collect_interfaces(file_contents).unwrap();
+        assert_ne!(interfaces, HashMap::new());
+    }
+
+    #[test]
     fn md_content_transformation() {
         let interfaces = HashMap::new();
         let md_content = transform_interfaces_to_md_content(interfaces, "##").unwrap();
         assert_eq!(md_content, "");
     }
-
-    #[test]
-    fn interface_collection() {
-        let interfaces = collect_interfaces(String::from("")).unwrap();
-        assert_eq!(interfaces, HashMap::new());
-    }
-
-    // #[test]
-    // fn interface_prefix_option() {
-    //     todo!();
-    // }
 }
