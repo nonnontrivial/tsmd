@@ -137,10 +137,10 @@ mod tests {
     fn interface_collection() {
         let mut file_contents = String::from("");
         file_contents.push_str("export interface {");
-        file_contents.push_str("\tthing: 42");
+        file_contents.push_str("  thing: 42;");
         file_contents.push_str("}");
         let interfaces = collect_interfaces(file_contents).unwrap();
-        assert_ne!(interfaces, HashMap::new());
+        assert_eq!(interfaces.keys().len(), 1);
     }
 
     #[test]
