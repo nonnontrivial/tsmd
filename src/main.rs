@@ -11,7 +11,7 @@
 use anyhow::*;
 use std::collections::HashMap;
 use std::ffi::OsStr;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use structopt::StructOpt;
 use tokio::fs;
@@ -50,7 +50,7 @@ fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String
                     .chars()
                     .skip(index + INTERFACE.len())
                     .take_while(|c| c != &'<' && c != &'{')
-                    .collect(); // let content_map: HashMap<String, String> = HashMap::new();
+                    .collect();
 
                 interfaces.insert(
                     interface_name.trim().to_string(),
@@ -114,7 +114,9 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
 
-    if let Err(_) = fs::remove_file(&md_filepath).await {}
+    if Path::exists(Path::new(&md_filepath)) {
+        fs::remove_file(&md_filepath).await?;
+    }
     fs::write(&md_filepath, md_content.as_bytes()).await?;
     Ok(())
 }
