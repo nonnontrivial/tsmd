@@ -8,6 +8,10 @@
 //! ```
 //!
 
+mod parser;
+
+use crate::parser::Parser;
+
 use anyhow::*;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -107,6 +111,8 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
+
+    let parser: Parser = Parser::new();
 
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let interfaces = collect_interfaces(contents)?;
