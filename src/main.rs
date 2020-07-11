@@ -40,46 +40,6 @@ struct Opt {
     exported_only: bool,
 }
 
-const INTERFACE: &'static str = "interface";
-
-/// Collects parsed contents of all interfaces in the source file in a hash map.
-fn collect_interfaces(contents: String) -> Result<HashMap<String, HashMap<String, String>>> {
-    let mut interfaces = HashMap::new();
-    let mut line_index = 0;
-
-    for line in contents.lines() {
-        match line.find(INTERFACE) {
-            Some(index) => {
-                let interface_name: String = line
-                    .chars()
-                    .skip(index + INTERFACE.len())
-                    .take_while(|c| c != &'<' && c != &'{')
-                    .collect();
-
-                interfaces.insert(
-                    interface_name.trim().to_string(),
-                    contents
-                        .lines()
-                        .skip(line_index + 1)
-                        .take_while(|line| *line != "}")
-                        .fold(HashMap::new(), |mut acc, x| {
-                            if x.is_empty() {
-                                return acc;
-                            }
-                            let pair: Vec<String> =
-                                x.split(":").map(|c| c.trim().replace(";", "")).collect();
-                            acc.insert(pair[0].to_string(), pair[1].to_string());
-                            acc
-                        }),
-                );
-            }
-            None => {}
-        }
-        line_index += 1;
-    }
-    Ok(interfaces)
-}
-
 /// Unpacks hashmap describing interfaces to actual table contents.
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
@@ -109,10 +69,9 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
 
-    let parser: Parser = Parser::new(opt.exported_only);
-
     let contents = fs::read_to_string(&opt.source_filepath).await?;
-    let interfaces = collect_interfaces(contents)?;
+    let parser: Parser = Parser::new(opt.exported_only);
+    let interfaces = parser.collect_interface_map(&contents)?;
 
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
@@ -140,11 +99,12 @@ mod tests {
 
     #[test]
     fn interface_collection() {
+        let parser = Parser::new(false);
         let mut file_contents = String::from("");
         file_contents.push_str("export interface {");
         file_contents.push_str("  thing: 42;");
         file_contents.push_str("}");
-        let interfaces = collect_interfaces(file_contents).unwrap();
+        let interfaces = parser.collect_interface_map(&file_contents).unwrap();
         assert_eq!(interfaces.keys().len(), 1);
     }
 
