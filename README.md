@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This is a CLI that generates relevant `.md` documentation from `.ts` source files.
+This is a CLI that generates `.md` documentation for interfaces in `.ts` source files.
 
 ### Installation & Guide
 
