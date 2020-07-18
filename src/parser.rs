@@ -16,6 +16,7 @@ impl Parser {
             exported_interfaces_only,
         }
     }
+    /// Create hashmap relating interface names -> hashmap of key, value pairs
     pub fn collect_interface_map(
         &self,
         contents: &str,

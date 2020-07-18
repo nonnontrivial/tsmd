@@ -29,7 +29,7 @@ use tokio::fs;
     "
 )]
 struct Opt {
-    /// Filepath to .ts source.
+    /// Filepath to .ts source
     #[structopt(parse(from_os_str), short, long, required = true)]
     source_filepath: PathBuf,
     /// Characters that should should prefix interface names in markdown
@@ -40,7 +40,7 @@ struct Opt {
     exported_only: bool,
 }
 
-/// Unpacks hashmap describing interfaces to actual table contents.
+/// Unpacks hashmap describing interfaces to actual table contents
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
     interface_prefix: &str,
@@ -97,8 +97,18 @@ async fn main() -> Result<()> {
 mod tests {
     use super::*;
 
+    // #[test]
+    // fn markdown_content() {
+    //     todo!()
+    // }
+
+    // #[test]
+    // fn exported_only_option() {
+    //     todo!()
+    // }
+
     #[test]
-    fn interface_collection() {
+    fn collect_interface_map() {
         let parser = Parser::new(false);
         let mut file_contents = String::from("");
         file_contents.push_str("export interface {");
@@ -109,7 +119,7 @@ mod tests {
     }
 
     #[test]
-    fn md_content_transformation() {
+    fn transform_interfaces() {
         let interfaces = HashMap::new();
         let md_content = transform_interfaces_to_md_content(interfaces, "##").unwrap();
         assert_eq!(md_content, "");
