@@ -68,8 +68,8 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
-
     let contents = fs::read_to_string(&opt.source_filepath).await?;
+
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
 
