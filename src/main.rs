@@ -40,7 +40,7 @@ struct Opt {
     exported_only: bool,
 }
 
-/// Unpacks hashmap describing interfaces to actual table contents
+/// Unpacks interface hashmap to string of actual table contents
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
     interface_prefix: &str,
@@ -63,7 +63,7 @@ fn transform_interfaces_to_md_content(
     Ok(output)
 }
 
-/// Reads .ts input and writes .md output.
+/// Reads .ts input from options and writes .md output to file of same name
 async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
@@ -94,18 +94,8 @@ async fn main() -> Result<()> {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
-
-    // #[test]
-    // fn markdown_content() {
-    //     todo!()
-    // }
-
-    // #[test]
-    // fn exported_only_option() {
-    //     todo!()
-    // }
 
     #[test]
     fn collect_interface_map() {
