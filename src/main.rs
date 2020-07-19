@@ -98,6 +98,11 @@ mod test {
     use super::*;
 
     #[test]
+    fn empty_input() {
+        unimplemented!();
+    }
+
+    #[test]
     fn collect_interface_map() {
         let parser = Parser::new(false);
         let mut file_contents = String::from("");
