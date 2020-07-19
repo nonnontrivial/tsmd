@@ -47,7 +47,12 @@ impl Parser {
                                 if pair.len() != 2 {
                                     return acc;
                                 }
-                                acc.insert(pair[0].to_string(), pair[1].to_string());
+                                let mut key = pair[0].to_string();
+                                let value = pair[1].to_string();
+                                if key.ends_with("?") {
+                                    key = format!("{} (optional)", &key[..key.len() - 1]);
+                                }
+                                acc.insert(key, value);
                                 acc
                             }),
                     );
