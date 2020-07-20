@@ -18,19 +18,20 @@ impl Parser {
         &self,
         contents: &str,
     ) -> Result<HashMap<String, HashMap<String, String>>> {
-        if *&self.exported_interfaces_only {
-            unimplemented!()
-        }
+        let mut interface_match_sequence = String::from(INTERFACE);
 
+        if *&self.exported_interfaces_only {
+            interface_match_sequence = format!("export {}", INTERFACE);
+        }
         let mut interfaces = HashMap::new();
         let mut line_index = 0;
 
         for line in contents.lines() {
-            match line.find(INTERFACE) {
+            match line.find(&interface_match_sequence) {
                 Some(index) => {
                     let interface_name: String = line
                         .chars()
-                        .skip(index + INTERFACE.len())
+                        .skip(index + &interface_match_sequence.len())
                         .take_while(|c| c != &'<' && c != &'{')
                         .collect();
 
@@ -49,6 +50,7 @@ impl Parser {
                                 }
                                 let mut key = pair[0].to_string();
                                 let value = pair[1].to_string();
+
                                 if key.ends_with("?") {
                                     key = format!("{} (optional)", &key[..key.len() - 1]);
                                 }
