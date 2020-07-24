@@ -1,6 +1,6 @@
 #![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
 
-//! generate markdown tables from type script interfaces
+//! generate markdown tables from type script files
 //!
 //! ## example
 //! ```shell
@@ -32,10 +32,10 @@ struct Opt {
     /// Filepath to .ts source
     #[structopt(parse(from_os_str), short, long, required = true)]
     source_filepath: PathBuf,
-    /// Characters that should should prefix interface names in markdown
+    /// Characters that should should prefix interface names in generated markdown
     #[structopt(short, long, default_value = "##")]
     interface_prefix: String,
-    /// Whether only exported interfaces should be parsed
+    /// Exclusively include exported interfaces
     #[structopt(short, long)]
     exported_only: bool,
 }
@@ -69,10 +69,8 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
     let contents = fs::read_to_string(&opt.source_filepath).await?;
-
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
-
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
 
@@ -96,11 +94,6 @@ async fn main() -> Result<()> {
 #[cfg(test)]
 mod test {
     use super::*;
-
-    #[test]
-    fn empty_input() {
-        unimplemented!();
-    }
 
     #[test]
     fn collect_interface_map() {

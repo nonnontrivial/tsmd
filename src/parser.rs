@@ -3,14 +3,18 @@ use std::collections::HashMap;
 
 const INTERFACE: &'static str = "interface";
 
+struct AST {}
+
 pub struct Parser {
     pub exported_interfaces_only: bool,
+    ast: Option<AST>,
 }
 
 impl Parser {
     pub fn new(exported_interfaces_only: bool) -> Self {
         Self {
             exported_interfaces_only,
+            ast: None,
         }
     }
     /// Create hashmap relating interface names -> hashmap of key, value pairs
