@@ -1,6 +1,6 @@
 #![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
 
-//! generate markdown tables from type script interfaces
+//! generate markdown tables from type script files
 //!
 //! ## example
 //! ```shell
@@ -29,18 +29,18 @@ use tokio::fs;
     "
 )]
 struct Opt {
-    /// Filepath to .ts source.
+    /// Filepath to .ts source
     #[structopt(parse(from_os_str), short, long, required = true)]
     source_filepath: PathBuf,
-    /// Characters that should should prefix interface names in markdown
+    /// Characters that should should prefix interface names in generated markdown
     #[structopt(short, long, default_value = "##")]
     interface_prefix: String,
-    /// Whether only exported interfaces should be parsed
+    /// Exclusively include exported interfaces
     #[structopt(short, long)]
     exported_only: bool,
 }
 
-/// Unpacks hashmap describing interfaces to actual table contents.
+/// Unpacks interface hashmap to string of actual table contents
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
     interface_prefix: &str,
@@ -63,16 +63,14 @@ fn transform_interfaces_to_md_content(
     Ok(output)
 }
 
-/// Reads .ts input and writes .md output.
+/// Reads .ts input from options and writes .md output to file of same name
 async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
-
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
-
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
 
@@ -94,11 +92,11 @@ async fn main() -> Result<()> {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
 
     #[test]
-    fn interface_collection() {
+    fn collect_interface_map() {
         let parser = Parser::new(false);
         let mut file_contents = String::from("");
         file_contents.push_str("export interface {");
@@ -109,7 +107,7 @@ mod tests {
     }
 
     #[test]
-    fn md_content_transformation() {
+    fn transform_interfaces() {
         let interfaces = HashMap::new();
         let md_content = transform_interfaces_to_md_content(interfaces, "##").unwrap();
         assert_eq!(md_content, "");
