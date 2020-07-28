@@ -6,6 +6,14 @@
 
 This is a CLI that generates `.md` documentation for interfaces in `.ts` source files.
 
+### Limitations
+
+This project does not yet support the following desirable features
+
+- resolve non-interface declarations into meaningful docs
+- resolve generic parameters and contraints into meaninful docs
+- allow vector of source `.ts` files
+
 ### Installation & Guide
 
 ```shell
