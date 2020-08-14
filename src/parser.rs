@@ -14,7 +14,6 @@ impl Parser {
     pub fn new(exported_interfaces_only: bool) -> Self {
         Self {
             exported_interfaces_only,
-            // ast: None,
         }
     }
     /// Create hashmap relating interface names -> hashmap of key, value pairs
