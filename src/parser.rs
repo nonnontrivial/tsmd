@@ -3,11 +3,8 @@ use std::collections::HashMap;
 
 const INTERFACE: &'static str = "interface";
 
-// struct AST {}
-
 pub struct Parser {
     pub exported_interfaces_only: bool,
-    // ast: Option<AST>,
 }
 
 impl Parser {
