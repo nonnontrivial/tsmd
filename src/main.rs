@@ -73,6 +73,7 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
+
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
 
@@ -86,6 +87,7 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
 #[tokio::main]
 async fn main() -> Result<()> {
     let opt: Opt = Opt::from_args();
+
     if let Err(err) = handle_file_input(&opt).await {
         eprintln!("{}", err);
         process::exit(1);
