@@ -13,6 +13,7 @@ This project does not yet support the following desirable features
 - resolve non-interface declarations into meaningful docs
 - resolve generic parameters and contraints into meaninful docs
 - allow vector of source `.ts` files
+- aligned rows and columns in output files
 
 ### Installation & Guide
 
@@ -20,13 +21,13 @@ This project does not yet support the following desirable features
 cargo install tsmd
 ```
 
-Running the following command will create `./input.md` and fill it with a [markdown table](https://www.markdownguide.org/extended-syntax#tables) for each `interface` in `./input.ts`.
+The following command takes a relative path to some `.ts` file under the `-s` flag. It creates a `.md` file and fills it with a [table](https://www.markdownguide.org/extended-syntax#tables) for each `interface` in the source `.ts` file.
 
 ```shell
 tsmd -s ./input.ts
 ```
 
-When `./input.ts` looks like this,
+When `./input.ts` looks like this:
 
 ```typescript
 export interface Output<A extends LowLevelAsset<unknown>> {
@@ -43,7 +44,7 @@ export interface LowLevelAsset<D> {
 
 ```
 
-`./input.md` will look like the following.
+`./input.md` will look like this: 
 
 ```md
 ## Output

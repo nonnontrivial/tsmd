@@ -48,7 +48,6 @@ fn transform_interfaces_to_md_content(
     interface_prefix: &str,
 ) -> Result<String> {
     let mut output = String::new();
-
     for (interface, contents) in interfaces {
         output.push_str(&format!("{} {}\n\n", interface_prefix, interface));
         output.push_str(
@@ -65,18 +64,17 @@ fn transform_interfaces_to_md_content(
     Ok(output)
 }
 
-/// Reads .ts input from options and writes .md output to file of same name
+/// Reads .ts input from options and writes .md output to file of same name.
 async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     if opt.source_filepath.extension() != Some(OsStr::new("ts")) {
         return Err(anyhow!("source_filepath must have .ts extension"));
     }
+
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
-
     let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
-
     if Path::exists(Path::new(&md_filepath)) {
         fs::remove_file(&md_filepath).await?;
     }
@@ -87,7 +85,6 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
 #[tokio::main]
 async fn main() -> Result<()> {
     let opt: Opt = Opt::from_args();
-
     if let Err(err) = handle_file_input(&opt).await {
         eprintln!("{}", err);
         process::exit(1);
