@@ -8,14 +8,18 @@ This is a CLI that generates `.md` documentation for `interface`s in `.ts` sourc
 
 ### Limitations
 
-This project does not yet support the following desirable features
+This project does **not yet support** the following desirable features
 
 - resolve non-interface declarations into meaningful docs
-- resolve generic parameters and contraints into meaninful docs
+- resolve generic parameters and contraints into meaningful docs
 - allow vector of source `.ts` files
 - aligned rows and columns in output files
 
 ### Installation & Guide
+
+> Requires [Cargo installation](https://www.rust-lang.org/tools/install)
+
+Install the `tsmd` crate:
 
 ```shell
 cargo install tsmd
