@@ -35,15 +35,16 @@ struct Opt {
     exported_only: bool,
 }
 
-/// Unpacks interface hashmap to string of actual table contents
+/// Transforms interface hashmap to string of actual table contents
 fn transform_interfaces_to_md_content(
     interfaces: HashMap<String, HashMap<String, String>>,
     interface_prefix: &str,
 ) -> Result<String> {
     let mut output = String::new();
-    for (interface, contents) in interfaces {
+    // Iterate over borrow of hash map in order to build a string containing
+    // formatted table
+    for (interface, contents) in &interfaces {
         output.push_str(&format!("{} {}\n\n", interface_prefix, interface));
-        // Format the fields into a table
         output.push_str(
             &contents.iter().fold(
                 String::from("| Field | Type |\n| --- | --- |\n"),

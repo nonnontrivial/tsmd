@@ -13,7 +13,7 @@ impl Parser {
             exported_interfaces_only,
         }
     }
-    /// Create hashmap relating interface names -> hashmap of key, value pairs
+    /// Create hashmap relating interface names to hashmap of key value pairs
     pub fn collect_interface_map(
         &self,
         contents: &str,
@@ -35,7 +35,6 @@ impl Parser {
                         .skip(index + &interface_match_sequence.len())
                         .take_while(|c| c != &'<' && c != &'{')
                         .collect();
-
                     // Relate the interface name to key, value pairs that make
                     // up its fields
                     interfaces.insert(
@@ -53,6 +52,7 @@ impl Parser {
 
                                 let mut key = pair[0].to_string();
                                 let value = pair[1].to_string();
+                                // Handle optional fields
                                 if key.ends_with("?") {
                                     key = format!("{} (optional)", &key[..key.len() - 1]);
                                 }
