@@ -1,7 +1,6 @@
 #![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
 
 //! Generate markdown tables from TypeScript files.
-//!
 
 mod parser;
 
@@ -36,7 +35,7 @@ struct Opt {
 }
 
 /// Transforms interface hashmap to string of actual table contents
-fn transform_interfaces_to_md_content(
+fn transform_interfaces(
     interfaces: HashMap<String, HashMap<String, String>>,
     interface_prefix: &str,
 ) -> Result<String> {
@@ -68,7 +67,7 @@ async fn handle_file_input(opt: &Opt) -> Result<(), Error> {
     let contents = fs::read_to_string(&opt.source_filepath).await?;
     let parser: Parser = Parser::new(opt.exported_only);
     let interfaces = parser.collect_interface_map(&contents)?;
-    let md_content = transform_interfaces_to_md_content(interfaces, &opt.interface_prefix)?;
+    let md_content = transform_interfaces(interfaces, &opt.interface_prefix)?;
     let md_filepath = opt.source_filepath.to_str().unwrap().replace(".ts", ".md");
     if Path::exists(Path::new(&md_filepath)) {
         fs::remove_file(&md_filepath).await?;
@@ -94,20 +93,10 @@ mod test {
     use super::*;
 
     #[test]
-    fn collect_interface_map() {
+    fn number_of_fields() {
         let parser = Parser::new(false);
-        let mut file_contents = String::from("");
-        file_contents.push_str("export interface {");
-        file_contents.push_str("  thing: 42;");
-        file_contents.push_str("}");
+        let file_contents = String::from("interface A {\n\ta: 0;\n\tb: 0;\n\tc: 0;\n}");
         let interfaces = parser.collect_interface_map(&file_contents).unwrap();
-        assert_eq!(interfaces.keys().len(), 1);
-    }
-
-    #[test]
-    fn transform_interfaces() {
-        let interfaces = HashMap::new();
-        let md_content = transform_interfaces_to_md_content(interfaces, "##").unwrap();
-        assert_eq!(md_content, "");
+        assert_eq!(interfaces["A"].len(), 3);
     }
 }
