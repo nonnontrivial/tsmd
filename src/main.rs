@@ -1,6 +1,6 @@
-#![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
+//! CLI tool that generates markdown tables from interfaces in TypeScript files.
 
-//! Generate markdown tables from TypeScript files.
+#![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]
 
 mod parser;
 

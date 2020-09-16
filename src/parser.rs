@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use anyhow::*;
+use std::collections::HashMap;
 
 const INTERFACE: &'static str = "interface";
 
@@ -13,20 +13,20 @@ impl Parser {
             exported_interfaces_only,
         }
     }
-    /// Create hashmap relating interface names to hashmap of key value pairs
+    /// Create hashmap relating interface names to hashmap of key, value pairs.
     pub fn collect_interface_map(
         &self,
         contents: &str,
     ) -> Result<HashMap<String, HashMap<String, String>>> {
         let mut interface_match_sequence = String::from(INTERFACE);
-        // Alter the match sequence given relevant command line flag
+        // Alter the match sequence given relevant command line flag.
         if self.exported_interfaces_only {
             interface_match_sequence = format!("export {}", INTERFACE);
         }
 
         let mut interfaces = HashMap::new();
         let mut line_index = 0;
-        // Match each line against the determined interface sequence
+        // Match each line against the determined interface sequence.
         for line in contents.lines() {
             match line.find(&interface_match_sequence) {
                 Some(index) => {
@@ -36,7 +36,7 @@ impl Parser {
                         .take_while(|c| c != &'<' && c != &'{')
                         .collect();
                     // Relate the interface name to key, value pairs that make
-                    // up its fields
+                    // up its fields.
                     interfaces.insert(
                         interface_name.trim().to_string(),
                         contents
@@ -52,7 +52,7 @@ impl Parser {
 
                                 let mut key = pair[0].to_string();
                                 let value = pair[1].to_string();
-                                // Handle optional fields
+                                // Handle optional fields.
                                 if key.ends_with("?") {
                                     key = format!("{} (optional)", &key[..key.len() - 1]);
                                 }
@@ -62,7 +62,7 @@ impl Parser {
                             }),
                     );
                 }
-                None => {}
+                None => {},
             }
             line_index += 1;
         }
